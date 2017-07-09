@@ -7,6 +7,10 @@ def naver_webtoon(url):
     html = req.get(url, headers=ep_headers).text
     soup = bfs(html, 'html.parser')
 
+    webtoon_name = ''.join(soup.select('div.detail h2')[0].text.split())
+
+    ep_name = soup.select('.tit_area h3')[0].text
+
     result = []
     n_result = []
     file_list = []
@@ -26,11 +30,19 @@ def naver_webtoon(url):
 
     for img_url in n_result:
         img = req.get(img_url, headers=ep_headers).content
-        filename = os.path.basename(img_url)
-        file_list.append(filename)
-        with open(filename, 'wb') as f:
-            f.write(img)
+        img_name = os.path.basename(img_url)
+        img_path = os.path.join(webtoon_name, ep_name, img_name)
 
+        dir_path = os.path.dirname(img_path)
+        if not os.path.exists(dir_path):
+            os.makedirs(dir_path)
+
+        if os.path.exists(img_path):
+            pass
+        else:
+            with open(img_path, 'wb') as f:
+                f.write(img)
+        file_list.append(img_path)
     for img_url in file_list:
         with Image.open(img_url) as im:
             if max_width < im.width:
@@ -47,7 +59,7 @@ def naver_webtoon(url):
             with Image.open(filename) as im:
                 canvas.paste(im, box=(0, height))
                 height = height + im.height
-        canvas.save('{}.jpg'.format(now))
+        canvas.save('{}.png'.format(now))
 
 
 if __name__ =='__main__':
