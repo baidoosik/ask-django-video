@@ -18,7 +18,9 @@ def update_news():
         if tag.select('em.ico_updt'):
             img_tag = tag.find('img')
             title = img_tag['title']
-            img_url = img_tag['src']
+            img_url = tag['href']
+
+            img_url = 'http://comic.naver.com/'+img_url
 
             up_comic_list.append({
                 'title': title,
@@ -31,13 +33,13 @@ def update_news():
 
     message['Subject'] = '네이버 웹툰 업데이트 리스트'
     message['From'] = 'qoentlr37@naver.com'
-    message['To'] = 'qoentlr37@gmail.com'
+    message['To'] = 'leejh920917@gmail.com'
 
     message.set_content(str(up_comic_list))
 
     with smtplib.SMTP_SSL('smtp.naver.com', 465) as server:
         server.ehlo()
-        server.login('qoentlr37', password)
+        server.login('qoentlr37', 'Erunc837!!')
         server.send_message(message)
 
     print('{}님이 {}님에게 이메일을 보냈습니다~!'.format(message['From'], message['To']))
