@@ -5,7 +5,8 @@ from selenium.webdriver.support.ui import Select
 
 def naver_mail():
     password = getpass.getpass('password:')
-
+    mail_list=[]
+    mail_str=''
     try:
         driver = webdriver.Chrome('/Users/doosikbai/chromedriver')
 
@@ -34,10 +35,29 @@ def naver_mail():
         print(response_dict['mailData'][0]['from']['name'], response_dict['mailData'][0]['subject'])
 
         for tag in response_dict['mailData']:
-            print(tag['from']['name'], tag['subject'])
+            mail_list.append(tag['from']['name']+tag['subject'])
+
 
     finally:
         driver.close()
+
+    for content in mail_list:
+        mail_str = mail_str +content+'\n'+'\n'
+
+    message = EmailMessage()
+    message['Subject'] = '네이버 메일 리스트'
+    message['From'] = 'qoentlr37@naver.com'
+    message['To'] = 'qoentlr37@gmail.com'
+
+    message.set_content(mail_str)
+
+    with smtplib.SMTP_SSL('smtp.naver.com', 465) as server:
+        server.ehlo()
+        server.login('qoentlr37', password)
+        server.send_message(message)
+
+    print('{}님이 {}님에게 이메일을 보냈습니다~!'.format(message['From'], message['To']))
+
 
 
 if __name__=='__main__':
