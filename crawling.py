@@ -22,7 +22,9 @@ class Crawling_Tool:
         return getpass.getpass('password:')
 
     def get_mail(self,mail_str='naver_str'):
-        naver_password = getpass.getpass('naver_password:')
+        with open("envs.json") as f:
+            envs = json.loads(f.read())
+        naver_password = envs['naver_password']
 
         message = EmailMessage()
         message['Subject'] = '네이버 메일 리스트'
